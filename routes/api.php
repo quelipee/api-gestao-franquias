@@ -1,0 +1,36 @@
+<?php
+
+use App\Http\Controllers\ProdutoController;
+use App\Http\Controllers\UnidadeController;
+use App\Http\Controllers\UserController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+
+Route::get('/user', function (Request $request) {
+    return $request->user();
+})->middleware('auth:sanctum');
+
+Route::middleware('guest:sanctum')->group(function () {
+    Route::post('/register', [UserController::class, 'register']);
+    Route::post('/login', [UserController::class, 'login']);
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [UserController::class, 'logout']);
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('unidades', [UnidadeController::class, 'index']);
+    Route::get('unidades/{unidade}' , [UnidadeController::class, 'show']);
+})->name('api.unidades');
+
+Route::middleware('auth:sanctum')->group(function () {
+   Route::post('produtos', [ProdutoController::class, 'store']);
+   Route::put('produtos/{produto}' , [ProdutoController::class, 'update']);
+   Route::delete('produtos/{produto}' , [ProdutoController::class, 'destroy']);
+})->name('api.produtos.post');
+
+Route::middleware('guest:sanctum')->group(function () {
+    Route::get('produtos', [ProdutoController::class, 'index']);
+    Route::get('produtos/{produto}' , [ProdutoController::class, 'show']);
+})->name('api.produtos.get');;
