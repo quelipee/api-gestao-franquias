@@ -26,7 +26,7 @@ class UserRegisterRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:100'],
             'email' => ['required', 'string', 'email', 'max:150', 'unique:users,email'],
-            'password' => ['required', 'string', 'min:8'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
             'cpf' => ['nullable', 'string', 'size:11', 'unique:users,cpf'],
             'role' => ['nullable', 'string', 'in:cliente,ADMIN,FUNCIONARIO'],
             'ativo' => ['nullable', 'boolean'],
@@ -42,10 +42,13 @@ class UserRegisterRequest extends FormRequest
             'email.required' => 'O campo e-mail é obrigatório.',
             'email.email' => 'Insira um e-mail válido.',
             'email.unique' => 'Este e-mail já está cadastrado.',
+            'password.confirmed' => 'A senha deve ser igual.', // TODO
             'password.required' => 'A senha é obrigatória.',
             'password.min' => 'A senha deve ter no mínimo 8 caracteres.',
             'cpf.size' => 'O CPF deve conter exatamente 11 dígitos (apenas números).',
             'cpf.unique' => 'Este CPF já está cadastrado.',
+            'role' => 'Esse tipo não foi encotrado.',
+            'ativo.boolean' => 'O ativo é somente booleano.',
         ];
     }
 }

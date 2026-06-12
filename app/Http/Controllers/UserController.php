@@ -7,6 +7,7 @@ use App\DTOs\UserAuthDTO;
 use App\DTOs\UserRegistrationDTO;
 use App\Http\Requests\UserRegisterRequest;
 use App\Http\Requests\UserSignInRequest;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
@@ -31,15 +32,15 @@ class UserController extends Controller
 
     public function login(UserSignInRequest $request)
     {
-        $this->userAuth->authenticate(UserAuthDTO::fromValidatedRequest($request));
+        return $this->userAuth->authenticate(UserAuthDTO::fromValidatedRequest($request));
     }
 
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+        $request->user()->tokens()->delete();
 
         return response()->json([
-            'message' => 'Logged out successfully'
+            'message' => 'Logout realizado com sucesso!'
         ], ResponseAlias::HTTP_OK);
     }
 }

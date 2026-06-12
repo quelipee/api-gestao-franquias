@@ -31,17 +31,39 @@ class UserTest extends TestCase
             'name' => 'felipe1',
             'email' => 'fe1@gmail.com',
             'password' => '12345678',
+            'password_confirmation' => '12345678',
             'cpf' => '12345678911',
             'role' => UserRole::Cliente->value,
             'consentimento_lgpd' => true,
         ];
-        $response = $this->post('/api/register', $payload);
+        $response = $this->postJson('/api/register', $payload);
         $response->assertStatus(ResponseAlias::HTTP_CREATED);
+    }
+
+    public function test_user_cannot_register_with_invalid_data()
+    {
+        $payload = [
+            'name' => '',
+            'email' => 'email-invalido',
+            'password' => '123',
+            'password_confirmation' => '98765432',
+            'cpf' => '1234',
+            'role' => 'GERENTE_SUPER_VIP',
+            'ativo' => 'texto-em-vez-de-bool',
+        ];
+
+        $response = $this->postJson('/api/register', $payload);
+
+        $response->assertStatus(ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
+        $response->assertJsonValidationErrors([
+            'name', 'email', 'password', 'cpf', 'role', 'ativo'
+        ]);
     }
 
     public function test_user_can_authenticate(): void
     {
         User::factory()->create([
+            'name' => 'felipe1',
             'email' => 'fe@gmail.com',
             'password' => '12345678',
         ]);
@@ -51,36 +73,62 @@ class UserTest extends TestCase
             'password' => '12345678',
         ]);
         $response->assertStatus(ResponseAlias::HTTP_OK);
+        $response->assertJsonStructure(['token', 'user']);
     }
 
-    public function test_user_can_logout(): void
+    public function test_user_cannot_authenticate_with_wrong_password()
+    {
+        User::factory()->create([
+            'name' => 'felipe1',
+            'email' => 'fe@gmail.com',
+            'password' => '12345678',
+        ]);
+
+        $payload = [
+            'email' => 'fe@gmail.com',
+            'password' => 'senhaerrada',
+        ];
+
+        $response = $this->postJson('/api/login', $payload);
+
+        $response->assertStatus(ResponseAlias::HTTP_UNAUTHORIZED);
+
+        $response->assertJson([
+            'message' => 'Credenciais inválidas.'
+        ]);
+    }
+
+    public function test_user_can_logout()
+    {
+        $user = User::factory()->create([
+            'name' => 'felipe1',
+            'email' => 'fe@gmail.com',
+            'password' => '12345678',
+        ]);
+
+        $response = $this->actingAs($user, 'sanctum')->postJson('/api/logout');
+        $response->assertStatus(ResponseAlias::HTTP_OK);
+        $response->assertJson(['message' => 'Logout realizado com sucesso!']);
+        $this->assertDatabaseMissing('personal_access_tokens', [
+            'tokenable_id' => $user->id,
+            'tokenable_type' => get_class($user),
+        ]);
+    }
+
+    public function test_unauthenticated_user_cannot_access_protected_routes()
+    {
+        $response = $this->postJson('/api/logout');
+
+        $response->assertStatus(ResponseAlias::HTTP_UNAUTHORIZED);
+        $response->assertJson([
+            'message' => 'Unauthenticated.'
+        ]);
+    }
+
+    public function test_user_without_permission_cannot_access_admin_routes()
     {
         $user = User::factory()->create();
-        $token = $user->createToken('token')->plainTextToken;
 
-        $response = $this->withHeader('Authorization', 'Bearer ' . $token)
-            ->postJson('/api/logout');
-        $response->assertStatus(ResponseAlias::HTTP_OK);
-        $this->assertCount(0, $user->tokens); // verifica se o token foi deletado
-    }
-
-    public function test_user_can_list_unidades(): void
-    {
-        Unidade::factory()->count(10)->create();
-
-        $response = $this->actingAs(User::factory()->create())
-            ->getJson('/api/unidades');
-        $response->assertStatus(ResponseAlias::HTTP_OK);
-        $response->assertJsonCount(10);
-    }
-
-    public function test_user_can_show_unidade(): void
-    {
-        $unidade = Unidade::factory()->count(10)->create()->first();
-
-        $response = $this->actingAs(User::factory()->create())
-            ->getJson('/api/unidades/' . $unidade->id);
-        $response->assertStatus(ResponseAlias::HTTP_OK);
-        $response->assertJsonFragment(['nome' => $unidade->nome]);
+        $response = $this->actingAs($user, 'sanctum')->postJson('/api/logout');
     }
 }

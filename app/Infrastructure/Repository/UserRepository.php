@@ -18,14 +18,7 @@ class UserRepository implements UserRepositoryContract
     public function create(UserRegistrationDTO $dto) : User
     {
         return DB::transaction(function () use ($dto) {
-           $user = new User();
-           $user->name = $dto->name;
-           $user->email = $dto->email;
-           $user->password = $dto->password;
-           $user->role = UserRole::from($dto->role); //TODO mudo depois
-           $user->save();
-
-           return $user;
+           return User::create($dto->toArray());
         });
     }
 
