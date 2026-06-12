@@ -24,11 +24,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('unidades/{unidade}' , [UnidadeController::class, 'show']);
 })->name('api.unidades');
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum','role:admin,gerente'])->group(function () {
    Route::post('produtos', [ProdutoController::class, 'store']);
    Route::put('produtos/{produto}' , [ProdutoController::class, 'update']);
    Route::delete('produtos/{produto}' , [ProdutoController::class, 'destroy']);
-})->name('api.produtos.post');
+});
 
 Route::middleware('guest:sanctum')->group(function () {
     Route::get('produtos', [ProdutoController::class, 'index']);

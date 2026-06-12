@@ -127,8 +127,16 @@ class UserTest extends TestCase
 
     public function test_user_without_permission_cannot_access_admin_routes()
     {
-        $user = User::factory()->create();
+        $payload = [
+            'nome' => 'felipe1',
+            'descricao' => 'dsadasda',
+            'preco' => 12.21
+        ];
+        $user = User::factory()->create([
+            'role' => UserRole::Cliente->value,
+        ]);
 
-        $response = $this->actingAs($user, 'sanctum')->postJson('/api/logout');
+        $response = $this->actingAs($user, 'sanctum')->postJson('/api/produtos', $payload);
+        $response->assertStatus(ResponseAlias::HTTP_FORBIDDEN);
     }
 }
