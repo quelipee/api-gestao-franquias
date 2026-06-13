@@ -29,7 +29,12 @@ class UserFactory extends Factory
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'password' => static::$password ??= Hash::make('password'),
-            'role' => UserRole::Cliente,
+            'cpf' => fake()->unique()->numerify('###########'),
+            'role' => UserRole::Cliente->value,
+            'ativo' => true,
+            'consentimento_lgpd' => true,
+            'consentimento_lgpd_em' => now(),
+            'email_verified_at' => now(),
             'remember_token' => Str::random(10),
         ];
     }
