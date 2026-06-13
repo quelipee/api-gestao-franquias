@@ -25,6 +25,10 @@ Route::middleware('auth:sanctum')->group(function () {
 })->name('api.unidades');
 
 Route::middleware(['auth:sanctum','role:admin,gerente'])->group(function () {
+    Route::post('/unidades', [UnidadeController::class, 'store']);
+});
+
+Route::middleware(['auth:sanctum','role:admin,gerente'])->group(function () {
    Route::post('produtos', [ProdutoController::class, 'store']);
    Route::put('produtos/{produto}' , [ProdutoController::class, 'update']);
    Route::delete('produtos/{produto}' , [ProdutoController::class, 'destroy']);

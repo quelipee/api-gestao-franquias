@@ -28,6 +28,7 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
+            'role' => UserRole::class,
             'email_verified_at' => 'datetime',
             'consentimento_lgpd_em' => 'datetime',
             'ativo' => 'boolean',

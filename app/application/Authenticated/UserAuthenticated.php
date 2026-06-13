@@ -6,7 +6,7 @@ use App\Contracts\Repository\UserRepositoryContract;
 use App\Contracts\Services\UserAuthContract;
 use App\DTOs\UserAuthDTO;
 use App\DTOs\UserRegistrationDTO;
-use App\Exceptions\UserAlreadyExistsException;
+use App\Exceptions\AuthException;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
@@ -19,13 +19,13 @@ class UserAuthenticated implements UserAuthContract
     }
 
     /**
-     * @throws UserAlreadyExistsException
+     * @throws AuthException
      */
     public function authenticate(UserAuthDTO $userAuthDTO) : array {
         $user = $this->userRepository->findByEmail($userAuthDTO->email);
 
         if (!$user || !Hash::check($userAuthDTO->password, $user->password)) {
-            throw UserAlreadyExistsException::InvalidPassword();
+            throw AuthException::InvalidPassword();
         }
         $token = $user->createToken('token')->plainTextToken;
 
@@ -41,12 +41,12 @@ class UserAuthenticated implements UserAuthContract
     }
 
     /**
-     * @throws UserAlreadyExistsException
+     * @throws AuthException
      */
     public function signUp(UserRegistrationDTO $dto) : User
     {
         if ($this->emailExists($dto->email)) {
-            throw UserAlreadyExistsException::EmailAlreadyExists();
+            throw AuthException::EmailAlreadyExists();
         }
 
         return $this->userRepository->create($dto);

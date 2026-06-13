@@ -16,10 +16,11 @@ readonly class ProdutoDataDTO
 
     public static function fromRequest(ProdutoStoreRequest $request): self
     {
+        $validated = $request->validated();
         return new self(
-            nome: $request->validated('nome'),
-            descricao: $request->validated('descricao'),
-            preco: (float)$request->validated('preco'),
+            nome: $validated['nome'],
+            descricao: $validated['descricao'],
+            preco: (float)$validated['preco'],
         );
     }
 }

@@ -30,7 +30,7 @@ class UserFactory extends Factory
             'email' => fake()->unique()->safeEmail(),
             'password' => static::$password ??= Hash::make('password'),
             'cpf' => fake()->unique()->numerify('###########'),
-            'role' => UserRole::Cliente->value,
+            'role' => UserRole::CLIENTE->value,
             'ativo' => true,
             'consentimento_lgpd' => true,
             'consentimento_lgpd_em' => now(),

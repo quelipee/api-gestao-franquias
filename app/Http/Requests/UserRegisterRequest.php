@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\UserRole;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
 class UserRegisterRequest extends FormRequest
@@ -28,7 +30,7 @@ class UserRegisterRequest extends FormRequest
             'email' => ['required', 'string', 'email', 'max:150', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'cpf' => ['nullable', 'string', 'size:11', 'unique:users,cpf'],
-            'role' => ['nullable', 'string', 'in:cliente,ADMIN,FUNCIONARIO'],
+            'role' => ['nullable', Rule::enum(UserRole::class)],
             'ativo' => ['nullable', 'boolean'],
             'consentimento_lgpd' => ['nullable', 'boolean'],
             'consentimento_lgpd_em' => ['nullable', 'date'],

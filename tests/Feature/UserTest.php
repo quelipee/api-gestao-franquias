@@ -33,7 +33,7 @@ class UserTest extends TestCase
             'password' => '12345678',
             'password_confirmation' => '12345678',
             'cpf' => '12345678911',
-            'role' => UserRole::Cliente->value,
+            'role' => UserRole::CLIENTE->value,
             'consentimento_lgpd' => true,
         ];
         $response = $this->postJson('/api/register', $payload);
@@ -94,7 +94,7 @@ class UserTest extends TestCase
         $response->assertStatus(ResponseAlias::HTTP_UNAUTHORIZED);
 
         $response->assertJson([
-            'message' => 'Credenciais inválidas.'
+            'message' => 'Senha incorreta.'
         ]);
     }
 
@@ -133,7 +133,7 @@ class UserTest extends TestCase
             'preco' => 12.21
         ];
         $user = User::factory()->create([
-            'role' => UserRole::Cliente->value,
+            'role' => UserRole::CLIENTE->value,
         ]);
 
         $response = $this->actingAs($user, 'sanctum')->postJson('/api/produtos', $payload);

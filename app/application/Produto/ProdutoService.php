@@ -17,7 +17,7 @@ class ProdutoService implements ProdutoServiceContract
 
     public function create(ProdutoDataDTO $produtoDTO): Produto
     {
-        return $this->repository->create($produtoDTO);
+        return $this->repository->save($produtoDTO);
     }
 
     public function update(ProdutoDataDTO $produtoUpdated, Produto $produto) : Produto

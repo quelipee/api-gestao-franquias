@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Enums\TipoUnidade;
 use Database\Factories\UnidadeFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-#[Fillable(['nome', 'cidade', 'estado', 'ativo'])]
+#[Fillable(['nome', 'cnpj', 'cidade', 'estado'
+    , 'endereco', 'telefone', 'tipo', 'ativo', 'horario_inicio', 'horario_fim'])]
 class Unidade extends Model
 {
     /** @use HasFactory<UnidadeFactory> */
@@ -20,21 +22,12 @@ class Unidade extends Model
      */
     protected function casts(): array
     {
-        return ['ativo' => 'boolean'];
-    }
-
-    public function estoques()
-    {
-        return $this->hasMany(Estoque::class);
-    }
-
-    public function getNomeUppercaseAttribute(): string
-    {
-        return strtoupper($this->nome);
-    }
-
-    public function setEstadoAttribute($value): void
-    {
-        $this->attributes['estado'] = strtoupper($value);
+        return [
+            'ativo' => 'boolean',
+            'tipo' => TipoUnidade::class,
+            'horario_inicio' => 'datetime:H:i:s',
+            'horario_fim' => 'datetime:H:i:s',
+            'deleted_at' => 'datetime',
+        ];
     }
 }
