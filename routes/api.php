@@ -22,7 +22,7 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('unidades', [UnidadeController::class, 'index']);
     Route::get('unidades/{unidade}' , [UnidadeController::class, 'show']);
-})->name('api.unidades');
+});
 
 Route::middleware(['auth:sanctum','role:admin,gerente'])->group(function () {
     Route::post('/unidades', [UnidadeController::class, 'store']);

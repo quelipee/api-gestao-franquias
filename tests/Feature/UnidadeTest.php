@@ -13,6 +13,18 @@ use Tests\TestCase;
 class UnidadeTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function authenticate(UserRole $role = UserRole::CLIENTE): User
+    {
+        $user = User::factory()->create([
+            'role' => $role,
+        ]);
+
+        $this->actingAs($user, 'sanctum');
+
+        return $user;
+    }
+
     /**
      * A basic feature test example.
      */
@@ -42,25 +54,52 @@ class UnidadeTest extends TestCase
             "horario_fim" => "18:00:00"
         ];
 
-        $response = $this->actingAs($user,'sanctum')->postJson('/api/unidades', $payload);
+        $response = $this->actingAs($user, 'sanctum')->postJson('/api/unidades', $payload);
         $response->assertStatus(ResponseAlias::HTTP_CREATED);
         $this->assertDatabaseHas('unidades', [
             'cnpj' => $payload['cnpj'],
             'nome' => $payload['nome'],
         ]);
     }
+
     public function test_user_can_list_unidades()
     {
-        Unidade::factory()->count(10)->create();
+        Unidade::factory()->count(20)->create();
         $user = User::factory()->create();
 
-        $response = $this->actingAs($user,'sanctum')->getJson('/api/unidades');
+        $response = $this->actingAs($user, 'sanctum')->getJson('/api/unidades');
         $response->assertStatus(ResponseAlias::HTTP_OK);
+        $response->assertJsonStructure([
+            'message',
+            'data' => [
+                'current_page',
+                'data',
+                'per_page',
+                'total',
+            ]
+        ]);
+    }
+
+    public function test_user_can_show_unidade()
+    {
+        $unidade = Unidade::factory()->count(20)->create()->first();
+        $this->authenticate();
+
+        $response = $this->getJson('/api/unidades/' . $unidade->id);
+        $response->assertStatus(ResponseAlias::HTTP_OK);
+        $response->assertJsonStructure([
+            'data' => [
+                'nome', 'cidade', 'estado', 'endereco',
+                'telefone', 'tipo', 'horario_inicio', 'horario_fim'
+            ]
+        ])->assertJsonMissing([
+            'cnpj', 'ativo', 'created_at', 'deleted_at'
+        ]);
     }
 }
 
-//test_user_can_list_unidades
-//test_user_can_show_unidade
+//test_user_can_list_unidades x
+//test_user_can_show_unidade x
 //test_admin_can_create_unidade x
 //test_admin_can_update_unidade
 //test_admin_can_delete_unidade

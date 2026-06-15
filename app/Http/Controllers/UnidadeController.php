@@ -18,9 +18,10 @@ class UnidadeController extends Controller
     {
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $list = $this->unidadeService->list();
+        $perPage = $request->integer('per_page', 5);
+        $list = $this->unidadeService->list($perPage);
 
         return response()->json([
             'message' => 'lista de todas as unidades',
@@ -30,7 +31,12 @@ class UnidadeController extends Controller
 
     public function show(Unidade $unidade)
     {
-        return $unidade;
+        $unidade = $this->unidadeService->unidadeAtivo($unidade);
+
+        return response()->json([
+            'message' => 'unidade ativa',
+            'data' => $unidade
+        ], ResponseAlias::HTTP_OK);
     }
 
     public function store(UnidadeRequest $request)
