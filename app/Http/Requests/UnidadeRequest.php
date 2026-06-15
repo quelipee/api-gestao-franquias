@@ -24,12 +24,16 @@ class UnidadeRequest extends FormRequest
      */
     public function rules(): array
     {
+        $estaAtualizado = $this->isMethod('PUT') || $this->isMethod('PATCH');
+
+        $regra = $estaAtualizado ? ['sometimes', 'required'] : ['required'];
+
         return [
-            'nome' => ['required', 'string', 'max:100'],
+            'nome' => array_merge($regra, ['string', 'max:100']),
             'cnpj' => ['nullable', 'string', 'max:14'],
-            'cidade' => ['required', 'string', 'max:100'],
-            'estado' => ['required', 'string', 'size:2'],
-            'endereco' => ['required', 'string', 'max:255'],
+            'cidade' => array_merge($regra, ['string', 'max:100']),
+            'estado' => array_merge($regra, ['string', 'size:2']),
+            'endereco' => array_merge($regra, ['string', 'max:255']),
             'telefone' => ['nullable', 'string', 'max:20'],
             'tipo' => ['nullable', Rule::enum(TipoUnidade::class)],
             'ativo' => ['nullable', 'boolean'],

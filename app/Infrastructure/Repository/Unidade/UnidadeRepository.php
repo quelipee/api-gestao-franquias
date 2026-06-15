@@ -31,4 +31,22 @@ class UnidadeRepository implements UnidadeRepositoryContract
             return Unidade::query()->paginate($perPage);
         });
     }
+
+    /**
+     * @throws Throwable
+     */
+    public function update(UnidadeDTO $unidadeDTO, Unidade $unidade): Unidade
+    {
+        return DB::transaction(function () use ($unidade, $unidadeDTO) {
+            $unidade->update($unidadeDTO->toArray());
+            return $unidade;
+        });
+    }
+
+    public function delete(Unidade $unidade) : bool
+    {
+        return DB::transaction(function () use ($unidade) {
+            return $unidade->delete();
+        });
+    }
 }

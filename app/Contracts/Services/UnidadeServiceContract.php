@@ -12,5 +12,9 @@ interface UnidadeServiceContract
 
     public function list(int $perPage): LengthAwarePaginator;
 
+    public function update(UnidadeDTO $unidadeDTO, Unidade $unidade): Unidade;
+
     public function unidadeAtivo(Unidade $unidade);
+
+    public function delete(Unidade $unidade): bool;
 }

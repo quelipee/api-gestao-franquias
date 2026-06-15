@@ -42,9 +42,29 @@ class UnidadeController extends Controller
     public function store(UnidadeRequest $request)
     {
         $unidade = $this->unidadeService->create(UnidadeDTO::fromRequest($request));
+
         return response()->json([
             'message' => 'Unidade cadastrado com sucesso!',
             'data' => $unidade
         ], ResponseAlias::HTTP_CREATED);
+    }
+
+    public function update(UnidadeRequest $request, Unidade $unidade)
+    {
+        $unidadeAtualizada = $this->unidadeService->update(
+            UnidadeDTO::fromRequest($request), $unidade
+        );
+
+        return response()->json([
+            'message' => 'Unidade atualizado com sucesso!',
+            'data' => $unidadeAtualizada
+        ], ResponseAlias::HTTP_OK);
+    }
+
+    public function destroy(Unidade $unidade)
+    {
+        $this->unidadeService->delete($unidade);
+
+        return response()->noContent(ResponseAlias::HTTP_NO_CONTENT);
     }
 }

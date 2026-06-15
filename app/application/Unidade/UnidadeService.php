@@ -28,6 +28,11 @@ class UnidadeService implements UnidadeServiceContract
         return $this->repository->getList($perPage);
     }
 
+    public function update(UnidadeDTO $unidadeDTO, Unidade $unidade): Unidade
+    {
+        return $this->repository->update($unidadeDTO, $unidade);
+    }
+
     /**
      * @throws UnidadeException
      */
@@ -40,6 +45,11 @@ class UnidadeService implements UnidadeServiceContract
         if (!$unidade->ativo) {
             throw UnidadeException::UnidadeInativa($unidade);
         }
-         return UnidadeClientResource::make($unidade);
+        return UnidadeClientResource::make($unidade);
+    }
+
+    public function delete(Unidade $unidade): bool
+    {
+        return $this->repository->delete($unidade);
     }
 }
