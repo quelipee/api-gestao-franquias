@@ -16,12 +16,16 @@ class CheckUserRole
      */
     public function handle(Request $request, Closure $next, string ...$roles): Response
     {
-        if (!$request->user()) return \response()->json(['message' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
-        $userRole = $request->user()->role instanceof UserRole ?
-            $request->user()->role->value : $request->user()->role;
+        if (!$request->user()) return \response()->json(['message' => 'Não Autorizado.'], Response::HTTP_UNAUTHORIZED);
 
-        if (!in_array($userRole,$roles)) {
-            return response()->json(['message' => 'This action is unauthorized.'], Response::HTTP_FORBIDDEN);
+        $userRole = $request->user()->role instanceof UserRole
+            ? $request->user()->role->value
+            : $request->user()->role;
+
+        if (!in_array($userRole, $roles)) {
+            return response()->json([
+                'message' => 'Acesso negado. Esta ação é permitida apenas para administradores ou gerentes.'
+            ], Response::HTTP_FORBIDDEN);
         }
 
         return $next($request);

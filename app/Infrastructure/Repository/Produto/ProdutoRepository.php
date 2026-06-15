@@ -10,7 +10,7 @@ use Throwable;
 
 class ProdutoRepository implements ProdutoRepositoryContract
 {
-    public function create(ProdutoDataDTO $dto): Produto
+    public function save(ProdutoDataDTO $dto): Produto
     {
         return Produto::create([
             'nome' => $dto->nome,

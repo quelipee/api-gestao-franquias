@@ -4,7 +4,7 @@ namespace App\DTOs;
 
 use App\Http\Requests\UserSignInRequest;
 
-class UserAuthDTO
+readonly class UserAuthDTO
 {
     public function __construct(
         public string $email,
@@ -13,11 +13,13 @@ class UserAuthDTO
     {
     }
 
-    public static function fromValidatedRequest(UserSignInRequest $request) : self
+    public static function fromRequest(UserSignInRequest $request) : self
     {
+        $validated = $request->validated();
+
         return new self(
-            email: $request->validated('email'),
-            password: $request->validated('password')
+            email: $validated['email'],
+            password: $validated['password']
         );
     }
 }

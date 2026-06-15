@@ -22,7 +22,13 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('unidades', [UnidadeController::class, 'index']);
     Route::get('unidades/{unidade}' , [UnidadeController::class, 'show']);
-})->name('api.unidades');
+});
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::post('/unidades', [UnidadeController::class, 'store'])->middleware(['role:admin']);
+    Route::put('/unidades/{unidade}', [UnidadeController::class, 'update'])->middleware(['role:admin']);
+    Route::delete('/unidades/{unidade}', [UnidadeController::class, 'destroy'])->middleware(['role:admin']);
+});
 
 Route::middleware(['auth:sanctum','role:admin,gerente'])->group(function () {
    Route::post('produtos', [ProdutoController::class, 'store']);

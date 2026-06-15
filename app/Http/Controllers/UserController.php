@@ -32,7 +32,7 @@ class UserController extends Controller
 
     public function login(UserSignInRequest $request)
     {
-        return $this->userAuth->authenticate(UserAuthDTO::fromValidatedRequest($request));
+        return $this->userAuth->authenticate(UserAuthDTO::fromRequest($request));
     }
 
     public function logout(Request $request)
