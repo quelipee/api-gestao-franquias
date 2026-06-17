@@ -57,11 +57,7 @@ class ProdutoTest extends TestCase
 
         $response->assertStatus(ResponseAlias::HTTP_CREATED);
 
-        $this->assertDatabaseHas('produtos', [
-            'categoria_id' => $categoria->id,
-            'nome' => 'Tapioca de Queijo Coalho',
-            'preco_base' => 12.90,
-        ]);
+        $this->assertDatabaseHas('produtos', $payload);
     }
 
     public function test_admin_can_update_produto(): void
@@ -102,12 +98,30 @@ class ProdutoTest extends TestCase
 
         $this->assertDatabaseHas('produtos', $payload);
     }
+
+    public function test_admin_can_attach_produto_to_unidade()
+    {
+        $this->authenticate(UserRole::ADMIN);
+        $unidade = $this->createUnidade()->first();
+        $produto = Produto::factory()->create();
+
+        $payload = [
+            'produto_id' => $produto->id,
+            'unidade_id' => $unidade->id,
+            'disponivel' => true,
+        ];
+
+        $response = $this->postJson('/api/unidades/' . $unidade->id . '/produtos', $payload);
+
+        $response->assertStatus(ResponseAlias::HTTP_CREATED);
+        $this->assertDatabaseHas('cardapio_unidade', $payload);
+    }
 }
 
 
 //test_admin_can_create_produto x
 //test_admin_can_update_produto x
-//test_admin_can_attach_produto_to_unidade
+//test_admin_can_attach_produto_to_unidade x
 //test_admin_can_detach_produto_from_unidade
 //test_user_can_list_produtos_by_unidade
 //test_user_cannot_see_produto_unavailable_in_unidade

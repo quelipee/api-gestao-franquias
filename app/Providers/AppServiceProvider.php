@@ -5,10 +5,12 @@ namespace App\Providers;
 use App\application\Authenticated\UserAuthenticated;
 use App\application\Produto\ProdutoService;
 use App\application\Unidade\UnidadeService;
+use App\application\UnidadeProduto\UnidadeProdutoService;
 use App\Contracts\Repository\ProdutoRepositoryContract;
 use App\Contracts\Repository\UnidadeRepositoryContract;
 use App\Contracts\Repository\UserRepositoryContract;
 use App\Contracts\Services\ProdutoServiceContract;
+use App\Contracts\Services\UnidadeProdutoServiceContract;
 use App\Contracts\Services\UnidadeServiceContract;
 use App\Contracts\Services\UserAuthContract;
 use App\Infrastructure\Repository\Produto\ProdutoRepository;
@@ -29,6 +31,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ProdutoRepositoryContract::class, ProdutoRepository::class);
         $this->app->bind(UnidadeServiceContract::class, UnidadeService::class);
         $this->app->bind(UnidadeRepositoryContract::class, UnidadeRepository::class);
+        $this->app->bind(UnidadeProdutoServiceContract::class, UnidadeProdutoService::class);
     }
 
     /**

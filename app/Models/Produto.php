@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -25,7 +26,17 @@ class Produto extends Model
             'ativo' => 'boolean',
         ];
     }
-    public function categoria(): belongsTo {
+
+    public function categoria(): belongsTo
+    {
         return $this->belongsTo(Categoria::class);
+    }
+
+    public function unidades(): BelongsToMany
+    {
+        return $this->belongsToMany(Unidade::class,
+            'cardapio_unidade', 'produto_id', 'unidade_id')
+            ->withPivot('disponivel')
+            ->withTimestamps();
     }
 }
