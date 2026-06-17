@@ -155,4 +155,4 @@ class UnidadeTest extends TestCase
 //test_admin_can_create_unidade x
 //test_admin_can_update_unidade x
 //test_admin_can_delete_unidade x
-//test_non_admin_cannot_create_unidade
+//test_non_admin_cannot_create_unidade x
