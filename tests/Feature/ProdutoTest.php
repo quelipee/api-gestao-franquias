@@ -7,6 +7,7 @@ use App\Models\Categoria;
 use App\Models\Produto;
 use App\Models\Unidade;
 use App\Models\User;
+use Closure;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
@@ -37,6 +38,18 @@ class ProdutoTest extends TestCase
     protected function createCategoria(int $qtd = 5): Collection
     {
         return Categoria::factory()->count($qtd)->create();
+    }
+
+    protected function unidadeAttachProduto(bool $disponivel = true)
+    {
+        $unidade = $this->createUnidade()->first();
+        $produto = Produto::factory()->create();
+        $unidade->produtos()->attach($produto->id, [
+            'disponivel' => $disponivel,
+        ]);
+        $unidade->load('produtos');
+
+        return $unidade->toArray();
     }
 
     public function test_admin_can_create_produto(): void
@@ -116,12 +129,52 @@ class ProdutoTest extends TestCase
         $response->assertStatus(ResponseAlias::HTTP_CREATED);
         $this->assertDatabaseHas('cardapio_unidade', $payload);
     }
+
+    public function test_admin_can_detach_produto_from_unidade()
+    {
+        $this->authenticate(UserRole::ADMIN);
+        $unidade = $this->unidadeAttachProduto();
+
+        $response = $this->deleteJson('/api/unidades/' . $unidade['id'] .
+            '/produtos/' . $unidade['produtos'][0]['id']);
+
+        $response->assertStatus(ResponseAlias::HTTP_NO_CONTENT);
+        $this->assertDatabaseMissing('cardapio_unidade', $unidade);
+    }
+
+    public function test_user_can_list_produtos_by_unidade()
+    {
+        $this->authenticate();
+        $unidade = $this->unidadeAttachProduto();
+
+        $response = $this->getjson('/api/unidades/' . $unidade['id'] . '/produtos');
+        $response->assertStatus(ResponseAlias::HTTP_OK);
+        $response->assertJsonFragment([
+            'id' => $unidade['produtos'][0]['id'],
+            'nome' => $unidade['produtos'][0]['nome'],
+        ]);
+        $response->assertJsonCount(1, 'data.produtos');
+    }
+    public function test_user_cannot_see_produto_unavailable_in_unidade()
+    {
+        $this->authenticate();
+        $unidade = $this->unidadeAttachProduto(false);
+
+        $response = $this->getjson('/api/unidades/' . $unidade['id'] . '/produtos');
+
+        $response->assertStatus(ResponseAlias::HTTP_OK);
+        $response->assertJsonMissing([
+            'pivot' => [
+                'disponivel' => false
+            ]
+        ]);
+    }
 }
 
 
 //test_admin_can_create_produto x
 //test_admin_can_update_produto x
 //test_admin_can_attach_produto_to_unidade x
-//test_admin_can_detach_produto_from_unidade
-//test_user_can_list_produtos_by_unidade
-//test_user_cannot_see_produto_unavailable_in_unidade
+//test_admin_can_detach_produto_from_unidade X
+//test_user_can_list_produtos_by_unidade x
+//test_user_cannot_see_produto_unavailable_in_unidade x

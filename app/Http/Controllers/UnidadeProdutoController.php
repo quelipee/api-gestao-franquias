@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Contracts\Services\UnidadeProdutoServiceContract;
 use App\DTOs\UnidadeProduto\UnidadeProdutoDTO;
 use App\Http\Requests\UnidadeProdutoRequest;
+use App\Models\Produto;
 use App\Models\Unidade;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -26,5 +27,22 @@ class UnidadeProdutoController extends Controller
             'message' => 'Unidade adicionada com sucesso!',
             'data' => $unidade
         ], ResponseAlias::HTTP_CREATED);
+    }
+    public function destroy(Unidade $unidade, Produto $produto): JsonResponse
+    {
+        $this->service->detach($unidade, $produto);
+        return response()->json([
+            'message' => 'Produto removido da unidade com sucesso!',
+        ],ResponseAlias::HTTP_NO_CONTENT);
+    }
+
+    public function index(Unidade $unidade)
+    {
+        $produtoUnidade = $this->service->listProdutoUnidade($unidade);
+
+        return response()->json([
+            'message' => 'Lista de produtos realizado com sucesso!',
+            'data' => $produtoUnidade
+        ], ResponseAlias::HTTP_OK);
     }
 }

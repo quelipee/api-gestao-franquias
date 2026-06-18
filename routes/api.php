@@ -24,6 +24,8 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('unidades', [UnidadeController::class, 'index']);
     Route::get('unidades/{unidade}' , [UnidadeController::class, 'show']);
+
+    Route::get('unidades/{unidade}/produtos', [UnidadeProdutoController::class, 'index']);
 });
 
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -32,6 +34,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::delete('/unidades/{unidade}', [UnidadeController::class, 'destroy'])->middleware(['role:admin']);
 
     Route::post('/unidades/{unidade}/produtos', [UnidadeProdutoController::class,'store'])->middleware(['role:admin,gerente']);
+    Route::delete('/unidades/{unidade}/produtos/{produto}', [UnidadeProdutoController::class,'destroy'])->middleware(['role:admin,gerente']);
 });
 
 Route::middleware(['auth:sanctum','role:admin,gerente'])->group(function () {
