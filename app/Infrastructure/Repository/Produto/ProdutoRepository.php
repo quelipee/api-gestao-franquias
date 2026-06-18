@@ -10,13 +10,14 @@ use Throwable;
 
 class ProdutoRepository implements ProdutoRepositoryContract
 {
+    /**
+     * @throws Throwable
+     */
     public function save(ProdutoDataDTO $dto): Produto
     {
-        return Produto::create([
-            'nome' => $dto->nome,
-            'descricao' => $dto->descricao,
-            'preco' => $dto->preco,
-        ]);
+        return Db::transaction(function () use ($dto) {
+            return Produto::create($dto->toArray());
+        });
     }
 
     /**
@@ -25,14 +26,7 @@ class ProdutoRepository implements ProdutoRepositoryContract
     public function update(Produto $produto, ProdutoDataDTO $produtoUpdated) : Produto
     {
         return DB::transaction(function () use ($produto, $produtoUpdated) {
-            $produto->fill([
-               'nome' => $produtoUpdated->nome,
-               'descricao' => $produtoUpdated->descricao,
-               'preco' => $produtoUpdated->preco,
-            ]);
-
-            $produto->save();
-
+            $produto->update($produtoUpdated->toArray());
             return $produto;
         });
     }

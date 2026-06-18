@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Contracts\Services\ProdutoServiceContract;
 use App\DTOs\Produto\ProdutoDataDTO;
-use App\Http\Requests\ProdutoStoreRequest;
+use App\Http\Requests\ProdutoRequest;
 use App\Models\Produto;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -29,18 +29,18 @@ class ProdutoController extends Controller
         return $produto->toArray();
     }
 
-    public function store(ProdutoStoreRequest $request) : JsonResponse
+    public function store(ProdutoRequest $request) : JsonResponse
     {
         $produto = $this->produtoService->create(ProdutoDataDTO::fromRequest($request));
 
         return response()->json([
             'message' => 'Produto cadastrado com sucesso!',
-            'data' => $produto->toArray()
+            'data' => $produto
         ], ResponseAlias::HTTP_CREATED);
 
     }
 
-    public function update(Produto $produto, ProdutoStoreRequest $request): JsonResponse
+    public function update(Produto $produto, ProdutoRequest $request): JsonResponse
     {
         $produtoAtualizado = $this->produtoService
             ->update(ProdutoDataDTO::fromRequest($request), $produto);
