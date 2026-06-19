@@ -18,7 +18,18 @@ class UnidadeFactory extends Factory
      */
     public function definition(): array
     {
-        $nomes = ['Matriz Itapeva', 'Filial Centro', 'Unidade Norte', 'Centro de Distribuição', 'Filial Pocket'];
+        $nomes = [
+            'Flor de Mandacaru',
+            'Raízes do Agreste',
+            'Oxente Sabores',
+            'Cordel do Sabor',
+            'Sabor do Sertão',
+            'Cuscuz e Prosa',
+            'Fogão de Lenha Nordestino',
+            'Danado de Bom',
+            'Chamego do Sertão',
+            'Asa Branca Bistrô'
+        ];
 
         $horarioInicio = $this->faker->time('H:i:s', '10:00:00');
         $horarioFim = $this->faker->time('H:i:s', '22:00:00');

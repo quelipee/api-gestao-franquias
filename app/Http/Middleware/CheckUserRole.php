@@ -18,9 +18,10 @@ class CheckUserRole
     {
         if (!$request->user()) return \response()->json(['message' => 'Não Autorizado.'], Response::HTTP_UNAUTHORIZED);
 
-        $userRole = $request->user()->role instanceof UserRole
-            ? $request->user()->role->value
-            : $request->user()->role;
+        $user = $request->user();
+        $userRole = $user->role instanceof UserRole
+            ? $user->role->value
+            : $user->role;
 
         if (!in_array($userRole, $roles)) {
             return response()->json([
@@ -28,6 +29,19 @@ class CheckUserRole
             ], Response::HTTP_FORBIDDEN);
         }
 
+        if ($userRole == UserRole::GERENTE->value) {
+            $unidadeId = $request->route('unidade.id') ?? $request->unidade_id;
+
+            if (!$unidadeId) return response()->json([
+                'message' => 'Unidade não encontrada.'
+            ],Response::HTTP_BAD_REQUEST);
+
+            $acesso = $user->unidades()->where('unidade_id', $unidadeId)->exists();
+
+            if (!$acesso) return response()->json([
+                'message' => 'Você não tem permissão a está unidade.'
+            ], Response::HTTP_FORBIDDEN);
+        }
         return $next($request);
     }
 }
