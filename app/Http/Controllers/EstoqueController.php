@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Contracts\Services\EstoqueServiceContract;
 use App\DTOs\Estoque\EstoqueDTO;
 use App\Http\Requests\EstoqueRequest;
-use App\Models\Estoque;
+use App\Models\Unidade;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class EstoqueController extends Controller
@@ -24,6 +24,16 @@ class EstoqueController extends Controller
             'message' => "Produto cadastrado com sucesso!",
             'data' => $ProdutoEstoque
         ], ResponseAlias::HTTP_CREATED);
+    }
+
+    public function index(Unidade $unidade)
+    {
+        $estoque = $this->service->view($unidade);
+
+        return response()->json([
+            'message' => "Produtos cadastrados",
+            'data' => $estoque
+        ], ResponseAlias::HTTP_OK);
     }
 
 }

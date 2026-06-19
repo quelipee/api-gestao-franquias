@@ -76,6 +76,7 @@ class EstoqueTest extends TestCase
         $response = $this->postJson('/api/estoque', $payload);
         $response->assertStatus(ResponseAlias::HTTP_CREATED);
     }
+
     public function test_gerente_can_subtract_estoque()
     {
         $unidade = $this->createUnidade()->get(1);
@@ -116,9 +117,63 @@ class EstoqueTest extends TestCase
             'quantidade' => -1,
         ]);
     }
+
+    public function test_gerente_can_view_estoque_by_unidade()
+    {
+        $unidade = $this->createUnidade()->get(1);
+        $this->unidadeAttachProduto($unidade);
+
+        $gerente = $this->authenticate(UserRole::GERENTE);
+        $this->vincularUsuarioUnidade($gerente, $unidade);
+
+        Estoque::factory()->count(5)->create();
+        Estoque::factory()->count(5)->create([
+            'unidade_id' => $unidade->id
+        ]);
+
+        $response = $this->getjson('/api/estoque/' . $unidade->id);
+        $response->assertStatus(ResponseAlias::HTTP_OK);
+        $response->assertJsonCount(5, 'data');
+        foreach ($response->json('data') as $estoque) {
+            $this->assertEquals($unidade->id, $estoque['unidade_id']);
+        }
+    }
+
+    public function test_estoque_cannot_go_below_zero()
+    {
+        $unidade = $this->createUnidade()->get(0);
+        $this->unidadeAttachProduto($unidade);
+
+        $gerente = $this->authenticate(UserRole::GERENTE);
+        $this->vincularUsuarioUnidade($gerente, $unidade);
+
+        $estoque = Estoque::factory()->create([
+            'unidade_id' => $unidade->id,
+            'produto_id' => $unidade->produtos->first()->id,
+            'quantidade' => 5,
+            'quantidade_minima' => 1
+        ]);
+
+        $payload = [
+            'unidade_id' => $unidade->id,
+            'estoque_id' => $estoque->id,
+            'tipo' => TipoMovimentacaoEstoque::SAIDA->value,
+            'quantidade' => 6,
+            'motivo' => 'saiu 5 pedidos'
+        ];
+
+        $response = $this->postJson('/api/estoque/movimentacao', $payload);
+
+        $response->assertStatus(ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
+        $response->assertJsonFragment(['message' => 'Estoque insuficiente.']);
+        $this->assertDatabaseHas('estoques', [
+            'id' => $estoque->id,
+            'quantidade' => 5,
+        ]);
+    }
 }
 
 //test_gerente_can_add_estoque_entry x
 //test_gerente_can_subtract_estoque x
-//test_gerente_can_view_estoque_by_unidade
-//test_estoque_cannot_go_below_zero
+//test_gerente_can_view_estoque_by_unidade x
+//test_estoque_cannot_go_below_zero x

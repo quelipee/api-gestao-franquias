@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\CardapioUnidadeController;
 use App\Http\Controllers\EstoqueController;
 use App\Http\Controllers\MovimentacaoEstoqueController;
 use App\Http\Controllers\ProdutoController;
@@ -46,6 +45,7 @@ Route::middleware(['auth:sanctum', 'role:admin,gerente'])->group(function () {
 });
 
 Route::middleware(['auth:sanctum', 'role:admin,gerente'])->group(function () {
+    Route::get('/estoque/{unidade}', [EstoqueController::class, 'index']);
     Route::post('/estoque', [EstoqueController::class, 'store']);
 
     Route::post('/estoque/movimentacao', [MovimentacaoEstoqueController::class, 'store']);

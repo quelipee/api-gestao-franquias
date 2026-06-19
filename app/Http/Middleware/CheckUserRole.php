@@ -30,7 +30,7 @@ class CheckUserRole
         }
 
         if ($userRole == UserRole::GERENTE->value) {
-            $unidadeId = $request->route('unidade_id') ?? $request->unidade_id;
+            $unidadeId = $request->route('unidade.id') ?? $request->unidade_id;
 
             if (!$unidadeId) return response()->json([
                 'message' => 'Unidade não encontrada.'

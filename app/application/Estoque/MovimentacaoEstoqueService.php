@@ -6,6 +6,7 @@ use App\Contracts\Repository\EstoqueRepositoryContract;
 use App\Contracts\Services\MovimentacaoEstoqueServiceContract;
 use App\DTOs\Estoque\MovimentacaoEstoqueDTO;
 use App\Enums\TipoMovimentacaoEstoque;
+use App\Exceptions\EstoqueException;
 use App\Models\Estoque;
 use App\Models\EstoqueMovimentacao;
 use Illuminate\Support\Facades\DB;
@@ -27,7 +28,7 @@ class MovimentacaoEstoqueService implements MovimentacaoEstoqueServiceContract
 
             if ($estoqueDTO->tipo === TipoMovimentacaoEstoque::SAIDA) {
                 if ($estoque->quantidade < $quantidade) {
-                    throw new \Exception('estoque insuficiente');
+                    throw EstoqueException::EstoqueInsuficiente();
                 }
                 $estoque->quantidade -= $quantidade;
             }
