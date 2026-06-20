@@ -39,4 +39,14 @@ class Produto extends Model
             ->withPivot('disponivel')
             ->withTimestamps();
     }
+
+    public function itensPedido(): HasMany
+    {
+        return $this->hasMany(ItemPedido::class);
+    }
+
+    public function estoques(): HasMany
+    {
+        return $this->hasMany(Estoque::class);
+    }
 }

@@ -21,8 +21,8 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('categoria_id')
                 ->constrained('categorias')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
             $table->string('nome', 120);
             $table->string('descricao', 255)->nullable();
             $table->decimal('preco_base', 10, 2);
@@ -39,12 +39,12 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('produto_id')
                 ->constrained('produtos')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
             $table->foreignId('unidade_id')
                 ->constrained('unidades')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
             $table->boolean('disponivel')->default(true);
             $table->unique(['produto_id', 'unidade_id']);
             $table->timestamps();

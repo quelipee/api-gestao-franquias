@@ -25,10 +25,7 @@ class EstoqueRequest extends FormRequest
     {
         return [
             'unidade_id' => ['required', 'integer', 'exists:unidades,id'],
-            'produto_id' => [
-                'required',
-                'integer',
-                'exists:produtos,id',
+            'produto_id' => ['required', 'integer', 'exists:produtos,id',
                 Rule::unique('estoques')->where(
                     fn($query) => $query->where('unidade_id', $this->unidade_id)
                 ),

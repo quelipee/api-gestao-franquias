@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\TipoUnidade;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -33,12 +34,12 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('unidade_id')
                 ->constrained('unidades')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
             $table->foreignId('user_id')
                 ->constrained('users')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
             $table->timestamps();
             $table->unique(['unidade_id', 'user_id']);
         });

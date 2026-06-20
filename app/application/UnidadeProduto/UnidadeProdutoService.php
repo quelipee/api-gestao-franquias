@@ -5,20 +5,33 @@ namespace App\application\UnidadeProduto;
 use App\Contracts\Services\UnidadeProdutoServiceContract;
 use App\DTOs\UnidadeProduto\UnidadeProdutoDTO;
 use App\Exceptions\UnidadeProdutoException;
+use App\Models\CardapioUnidade;
 use App\Models\Produto;
 use App\Models\Unidade;
 
 class UnidadeProdutoService implements UnidadeProdutoServiceContract
 {
 
+    /**
+     * @throws UnidadeProdutoException
+     */
     public function attach(UnidadeProdutoDTO $unidadeProdutoDTO, Unidade $unidade): Unidade
     {
-        $unidade->produtos()->attach($unidadeProdutoDTO->produto_id,
-            ['disponivel' => $unidadeProdutoDTO->disponivel ?? true]);
+        $exists = CardapioUnidade::query()
+            ->where('produto_id', $unidadeProdutoDTO->produto_id)
+            ->where('unidade_id', $unidade->id)
+            ->exists();
+        if ($exists) {
+            throw UnidadeProdutoException::ProdutoJaVinculado();
+        }
 
-        $unidade->load('produtos');
+        CardapioUnidade::create([
+            'produto_id' => $unidadeProdutoDTO->produto_id,
+            'unidade_id' => $unidade->id,
+            'disponivel' => $unidadeProdutoDTO->disponivel ?? true,
+        ]);
 
-        return $unidade;
+        return $unidade->load('produtos');
     }
 
     /**
@@ -26,11 +39,15 @@ class UnidadeProdutoService implements UnidadeProdutoServiceContract
      */
     public function detach(Unidade $unidade, Produto $produto): void
     {
-        if (!$unidade->produtos()->whereKey($produto->id)->exists()) {
+        $vinculo = CardapioUnidade::query()
+            ->where('produto_id',$produto->id)
+            ->where('unidade_id',$unidade->id)
+            ->first();
+        if (!$vinculo) {
             throw UnidadeProdutoException::ProdutoNaoVinculado();
         }
-        //TODO TENHO QUE VERIFICAR DEPOIS
-        $unidade->produtos()->detach($produto);
+
+        $vinculo->delete();
     }
 
     /**
