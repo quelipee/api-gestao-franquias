@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Enums\UserRole;
+use App\Models\CardapioUnidade;
 use App\Models\Categoria;
 use App\Models\Produto;
 use App\Models\Unidade;
@@ -44,7 +45,10 @@ class ProdutoTest extends TestCase
     {
         $unidade = $this->createUnidade()->first();
         $produto = Produto::factory()->create();
-        $unidade->produtos()->attach($produto->id, [
+
+        CardapioUnidade::create([
+            'produto_id' => $produto->id,
+            'unidade_id' => $unidade->id,
             'disponivel' => $disponivel,
         ]);
         $unidade->load('produtos');

@@ -6,6 +6,7 @@ enum PagamentoStatus: string
 {
     case Aprovado = 'APROVADO';
     case Negado = 'NEGADO';
+    case Pendente = 'PENDENTE';
 
     public function label(): string
     {

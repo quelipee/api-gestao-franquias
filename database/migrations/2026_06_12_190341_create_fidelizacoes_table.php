@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -15,8 +14,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')
                 ->constrained('users')
-            ->onUpdate('cascade')
-            ->onDelete('cascade');
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
             $table->integer('pontos_saldo')->default(0);
             $table->integer('pontos_acumulados_total')->default(0);
             $table->integer('pontos_resgatados_total')->default(0);
@@ -28,16 +27,16 @@ return new class extends Migration
             $table->id();
             $table->foreignId('fidelizacao_id')
                 ->constrained('fidelizacoes')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
             $table->foreignId('pedido_id')
                 ->nullable()
-            ->constrained('pedidos')
-            ->onUpdate('cascade')
-            ->onDelete('cascade');
+                ->constrained('pedidos')
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
             $table->string('tipo'); //TODO
             $table->integer('pontos');
-            $table->string('descricao',255)->nullable();
+            $table->string('descricao', 255)->nullable();
             $table->timestamps();
 
             $table->index('fidelizacao_id');

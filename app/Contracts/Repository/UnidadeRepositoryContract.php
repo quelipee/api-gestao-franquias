@@ -15,4 +15,6 @@ interface UnidadeRepositoryContract
     public function update(UnidadeDTO $unidadeDTO, Unidade $unidade): Unidade;
 
     public function delete(Unidade $unidade): bool;
+
+    public function findById(int $id): Unidade;
 }

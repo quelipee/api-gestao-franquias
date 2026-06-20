@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Enums\TipoMovimentacaoEstoque;
 use App\Enums\UserRole;
+use App\Models\CardapioUnidade;
 use App\Models\Categoria;
 use App\Models\Estoque;
 use App\Models\Produto;
@@ -44,7 +45,10 @@ class EstoqueTest extends TestCase
     protected function unidadeAttachProduto(Unidade $unidade, bool $disponivel = true)
     {
         $produto = Produto::factory()->create();
-        $unidade->produtos()->attach($produto->id, [
+
+        CardapioUnidade::create([
+            'produto_id' => $produto->id,
+            'unidade_id' => $unidade->id,
             'disponivel' => $disponivel,
         ]);
         $unidade->load('produtos');

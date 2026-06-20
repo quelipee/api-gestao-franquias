@@ -31,16 +31,6 @@ class UnidadeTest extends TestCase
         return Unidade::factory()->count($qtd)->create();
     }
 
-    /**
-     * A basic feature test example.
-     */
-    public function test_example(): void
-    {
-        $response = $this->get('/');
-
-        $response->assertStatus(200);
-    }
-
     public function test_admin_can_create_unidade()
     {
         $this->authenticate(UserRole::ADMIN);

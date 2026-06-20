@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\EstoqueController;
 use App\Http\Controllers\MovimentacaoEstoqueController;
+use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\ProdutoController;
 use App\Http\Controllers\UnidadeController;
 use App\Http\Controllers\UnidadeProdutoController;
@@ -49,6 +50,10 @@ Route::middleware(['auth:sanctum', 'role:admin,gerente'])->group(function () {
     Route::post('/estoque', [EstoqueController::class, 'store']);
 
     Route::post('/estoque/movimentacao', [MovimentacaoEstoqueController::class, 'store']);
+});
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::post('/pedido',[PedidoController::class, 'store']);
 });
 
 Route::middleware('guest:sanctum')->group(function () {

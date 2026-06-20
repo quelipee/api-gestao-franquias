@@ -14,13 +14,13 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('unidade_id')
                 ->constrained('unidades')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
             $table->foreignId('user_id')
                 ->constrained('users')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
-            $table->string('numero_pedido', 20)->unique();
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
+            $table->string('numero_pedido', 30)->unique();
             $table->string('canal_pedido')->default('APP');
             $table->string('status')->default('AGUARDANDO_PAGAMENTO');
             $table->decimal('subtotal', 10, 2);
@@ -42,12 +42,12 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('pedido_id')
                 ->constrained('pedidos')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
             $table->foreignId('produto_id')
                 ->constrained('produtos')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
             $table->integer('quantidade');
             $table->decimal('preco_unitario', 10, 2);
             $table->decimal('subtotal', 10, 2);

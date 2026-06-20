@@ -5,20 +5,24 @@ namespace App\Providers;
 use App\application\Authenticated\UserAuthenticated;
 use App\application\Estoque\EstoqueService;
 use App\application\Estoque\MovimentacaoEstoqueService;
+use App\application\Pedido\PedidoService;
 use App\application\Produto\ProdutoService;
 use App\application\Unidade\UnidadeService;
 use App\application\UnidadeProduto\UnidadeProdutoService;
 use App\Contracts\Repository\EstoqueRepositoryContract;
+use App\Contracts\Repository\PedidoRepositoryContract;
 use App\Contracts\Repository\ProdutoRepositoryContract;
 use App\Contracts\Repository\UnidadeRepositoryContract;
 use App\Contracts\Repository\UserRepositoryContract;
 use App\Contracts\Services\EstoqueServiceContract;
 use App\Contracts\Services\MovimentacaoEstoqueServiceContract;
+use App\Contracts\Services\PedidoServiceContract;
 use App\Contracts\Services\ProdutoServiceContract;
 use App\Contracts\Services\UnidadeProdutoServiceContract;
 use App\Contracts\Services\UnidadeServiceContract;
 use App\Contracts\Services\UserAuthContract;
 use App\Infrastructure\Repository\Estoque\EstoqueRepository;
+use App\Infrastructure\Repository\Pedido\PedidoRepository;
 use App\Infrastructure\Repository\Produto\ProdutoRepository;
 use App\Infrastructure\Repository\Unidade\UnidadeRepository;
 use App\Infrastructure\Repository\UserRepository;
@@ -41,6 +45,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(EstoqueServiceContract::class, EstoqueService::class);
         $this->app->bind(EstoqueRepositoryContract::class, EstoqueRepository::class);
         $this->app->bind(MovimentacaoEstoqueServiceContract::class, MovimentacaoEstoqueService::class);
+        $this->app->bind(PedidoServiceContract::class, PedidoService::class);
+        $this->app->bind(PedidoRepositoryContract::class, PedidoRepository::class);
     }
 
     /**

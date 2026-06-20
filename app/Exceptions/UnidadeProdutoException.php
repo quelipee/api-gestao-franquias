@@ -33,6 +33,14 @@ class UnidadeProdutoException extends Exception
         );
     }
 
+    public static function ProdutoJaVinculado(): self
+    {
+        return new self(
+          'Produto já foi cadastrado.',
+          ResponseAlias::HTTP_NOT_FOUND
+        );
+    }
+
     public function render(): JsonResponse
     {
         return response()->json([

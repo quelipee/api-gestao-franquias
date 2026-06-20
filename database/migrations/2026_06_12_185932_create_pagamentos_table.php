@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('pedido_id')
                 ->constrained('pedidos')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
             $table->string('forma_pagamento')->default('MOCK');
             $table->string('status')->default('PENDENTE');
             $table->decimal('valor', 10, 2);

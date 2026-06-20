@@ -6,6 +6,7 @@ use App\Contracts\Repository\UnidadeRepositoryContract;
 use App\DTOs\Unidade\UnidadeDTO;
 use App\Models\Unidade;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
@@ -47,6 +48,13 @@ class UnidadeRepository implements UnidadeRepositoryContract
     {
         return DB::transaction(function () use ($unidade) {
             return $unidade->delete();
+        });
+    }
+
+    public function findById(int $id): Unidade
+    {
+        return DB::transaction(function () use ($id) {
+            return Unidade::query()->where('id',$id)->first();
         });
     }
 }
