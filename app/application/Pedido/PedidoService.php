@@ -7,12 +7,14 @@ use App\Contracts\Repository\PedidoRepositoryContract;
 use App\Contracts\Repository\UnidadeRepositoryContract;
 use App\Contracts\Services\PedidoServiceContract;
 use App\DTOs\Pedido\PedidoDTO;
+use App\Enums\CanalPedido;
+use App\Enums\OrderStatus;
 use App\Exceptions\EstoqueException;
+use App\Exceptions\InvalidOrderStatusTransitionException;
 use App\Exceptions\UnidadeException;
 use App\Exceptions\UnidadeProdutoException;
-use App\Models\Estoque;
-use App\Models\ItemPedido;
 use App\Models\Pedido;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
@@ -72,7 +74,6 @@ class PedidoService implements PedidoServiceContract
         }
 
         $estoque = $this->estoqueRepository->findByUnidade($unidade);
-
         $estoqueMap = $estoque->keyBy('produto_id');
 
         foreach ($pedidoDTO->itens as $item) {
@@ -81,6 +82,14 @@ class PedidoService implements PedidoServiceContract
             if (!$estoqueItem) {
                 throw UnidadeProdutoException::NaoExisteProduto();
             }
+
+            $estoqueDisponivel = $estoqueItem->produto->cardapio
+                ->firstWhere('unidade_id', $pedidoDTO->unidade_id);
+
+            if (!$estoqueDisponivel->disponivel) {
+                throw EstoqueException::ProdutoIndisponivel();
+            };
+
             if ($estoqueItem->quantidade < $item->quantidade) {
                 throw EstoqueException::EstoqueInsuficiente();
             }
@@ -90,5 +99,30 @@ class PedidoService implements PedidoServiceContract
 
         $total = $subtotal - $desconto;
         return array($subtotal, $desconto, $estoqueMap, $total);
+    }
+
+    public function listForCanal(?CanalPedido $canalPedido, ?OrderStatus $status)
+    {
+        return $this->pedidoRepository->filtro($canalPedido, $status);
+    }
+
+    /**
+     * @throws InvalidOrderStatusTransitionException
+     */
+    public function editPedido(Pedido $pedido, Request $request): Pedido
+    {
+        $statusNovo = OrderStatus::from($request['status']);
+        $statusAtual = $pedido->status;
+
+        if (!$statusAtual->podeTransicionarPara($statusNovo)) {
+            throw InvalidOrderStatusTransitionException::StatusNaoTransicionado();
+        }
+
+        if ($statusNovo == OrderStatus::Cancelado) {
+            $motivo_cancelamento = $request['motivo_cancelamento'];
+
+            return $this->pedidoRepository->cancelamentoPedido($pedido, $statusNovo, $motivo_cancelamento);
+        }
+        return $this->pedidoRepository->updateStatus($pedido, $statusNovo);
     }
 }

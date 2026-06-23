@@ -7,7 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
-class EstoqueException extends Exception
+class InvalidOrderStatusTransitionException extends Exception
 {
     protected int $statusCode;
 
@@ -17,18 +17,10 @@ class EstoqueException extends Exception
         $this->statusCode = $statusCode;
     }
 
-    public static function EstoqueInsuficiente(): self
+    public static function StatusNaoTransicionado(): self
     {
         return new self(
-            "Estoque insuficiente.",
-            ResponseAlias::HTTP_UNPROCESSABLE_ENTITY
-        );
-    }
-
-    public static function ProdutoIndisponivel(): self
-    {
-        return new self(
-            "Produto Indisponivel.",
+            'Não pode atualizar Status',
             ResponseAlias::HTTP_UNPROCESSABLE_ENTITY
         );
     }

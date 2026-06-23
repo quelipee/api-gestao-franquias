@@ -14,7 +14,9 @@ use Illuminate\Support\Str;
 use Random\RandomException;
 
 #[Fillable(['unidade_id', 'user_id', 'canal_pedido', 'subtotal', 'desconto', 'total', 'observacao',
-    'cancelado_em', 'motivo_cancelamento'])]
+    'cancelado_em', 'motivo_cancelamento',
+    'status'
+])]
 #[Table('pedidos')]
 class Pedido extends Model
 {

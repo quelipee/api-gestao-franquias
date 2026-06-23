@@ -52,8 +52,13 @@ Route::middleware(['auth:sanctum', 'role:admin,gerente'])->group(function () {
     Route::post('/estoque/movimentacao', [MovimentacaoEstoqueController::class, 'store']);
 });
 
-Route::middleware(['auth:sanctum'])->group(function () {
-    Route::post('/pedido',[PedidoController::class, 'store']);
+Route::middleware(['auth:sanctum', 'role:cliente'])->group(function () {
+    Route::post('/pedido', [PedidoController::class, 'store']);
+    Route::get('/pedidos', [PedidoController::class, 'index']);
+});
+
+Route::middleware(['auth:sanctum', 'role:cozinha,gerente,cliente,atendente'])->group(function () {
+    Route::put('/pedidos/{pedido}', [PedidoController::class, 'update']);
 });
 
 Route::middleware('guest:sanctum')->group(function () {

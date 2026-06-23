@@ -22,4 +22,29 @@ enum OrderStatus: string
             self::Cancelado => 'Cancelado',
         };
     }
+
+    public function ordem(): int
+    {
+        return match ($this) {
+            self::AguardandoPagamento => 0,
+            self::Pago => 1,
+            self::EmPreparo => 2,
+            self::Pronto => 3,
+            self::Entregue => 4,
+            self::Cancelado => -1, // não entra na ordem normal
+        };
+    }
+
+    public function podeTransicionarPara(OrderStatus $novoStatus): bool
+    {
+        if ($novoStatus === self::Cancelado) {
+            return !in_array($this, [self::Entregue, self::Cancelado], true);
+        }
+
+        if (in_array($this, [self::Entregue, self::Cancelado], true)) {
+            return false;
+        }
+
+        return $novoStatus->ordem() > $this->ordem();
+    }
 }
