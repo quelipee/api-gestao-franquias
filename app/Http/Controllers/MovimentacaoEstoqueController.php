@@ -6,7 +6,9 @@ use App\Contracts\Services\MovimentacaoEstoqueServiceContract;
 use App\DTOs\Estoque\MovimentacaoEstoqueDTO;
 use App\Http\Requests\EstoqueMovimentacaoRequest;
 use App\Models\Estoque;
+use App\Models\Unidade;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class MovimentacaoEstoqueController extends Controller
@@ -19,6 +21,7 @@ class MovimentacaoEstoqueController extends Controller
 
     public function store(EstoqueMovimentacaoRequest $request)
     {
+        Gate::authorize('gerenciar',Unidade::findOrFail($request->unidade_id));
         $estoque = $this->service->save(MovimentacaoEstoqueDTO::fromRequest($request));
 
         return response()->json([

@@ -118,8 +118,9 @@ class ProdutoTest extends TestCase
 
     public function test_admin_can_attach_produto_to_unidade()
     {
-        $this->authenticate(UserRole::ADMIN);
+        $user = $this->authenticate(UserRole::GERENTE);
         $unidade = $this->createUnidade()->first();
+        $unidade->users()->attach($user->id);
         $produto = Produto::factory()->create();
 
         $payload = [

@@ -26,6 +26,11 @@ use App\Infrastructure\Repository\Pedido\PedidoRepository;
 use App\Infrastructure\Repository\Produto\ProdutoRepository;
 use App\Infrastructure\Repository\Unidade\UnidadeRepository;
 use App\Infrastructure\Repository\UserRepository;
+use App\Models\Pedido;
+use App\Models\Unidade;
+use App\Policies\PedidoPolicy;
+use App\Policies\UnidadePolicy;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -54,6 +59,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Gate::policy(Pedido::class, PedidoPolicy::class);
+        Gate::policy(Unidade::class, UnidadePolicy::class);
     }
 }

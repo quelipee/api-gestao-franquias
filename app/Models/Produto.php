@@ -49,4 +49,9 @@ class Produto extends Model
     {
         return $this->hasMany(Estoque::class);
     }
+
+    public function cardapio() : HasMany
+    {
+        return $this->hasMany(CardapioUnidade::class);
+    }
 }

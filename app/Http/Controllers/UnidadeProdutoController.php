@@ -9,6 +9,7 @@ use App\Models\Produto;
 use App\Models\Unidade;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class UnidadeProdutoController extends Controller
@@ -21,6 +22,7 @@ class UnidadeProdutoController extends Controller
 
     public function store(UnidadeProdutoRequest $request, Unidade $unidade): JsonResponse
     {
+        Gate::authorize('gerenciar', $unidade);
         $unidade = $this->service->attach(UnidadeProdutoDTO::fromRequest($request), $unidade);
 
         return response()->json([

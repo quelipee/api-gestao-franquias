@@ -27,15 +27,8 @@ class CardapioUnidade extends Model
         return $this->belongsTo(Produto::class);
     }
 
-    public function unidade(): BelongsToMany
+    public function unidade(): BelongsTo
     {
-        return $this->belongsToMany(
-            Unidade::class,
-            'cardapio_unidade',
-            'produto_id',
-            'unidade_id'
-        )->using(CardapioUnidade::class)
-            ->withPivot('disponivel')
-            ->withTimestamps();
+        return $this->belongsTo(Unidade::class);
     }
 }
