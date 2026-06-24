@@ -14,7 +14,7 @@ enum OrderStatus: string
     public function label(): string
     {
         return match ($this) {
-            self::AguardandoPagamento => 'Aguardando Pagamento',
+            self::AguardandoPagamento => 'Aguardando PagamentoRepositoryContract',
             self::Pago => 'Pago',
             self::EmPreparo => 'Em Preparo',
             self::Pronto => 'Pronto',
