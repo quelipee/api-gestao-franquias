@@ -8,7 +8,6 @@ use App\Enums\CanalPedido;
 use App\Enums\OrderStatus;
 use App\Models\ItemPedido;
 use App\Models\Pedido;
-use Illuminate\Support\Facades\DB;
 use Throwable;
 
 class PedidoRepository implements PedidoRepositoryContract

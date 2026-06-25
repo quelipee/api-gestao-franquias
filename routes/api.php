@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\EstoqueController;
 use App\Http\Controllers\MovimentacaoEstoqueController;
+use App\Http\Controllers\PagamentoController;
 use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\ProdutoController;
 use App\Http\Controllers\UnidadeController;
@@ -55,6 +56,10 @@ Route::middleware(['auth:sanctum', 'role:admin,gerente'])->group(function () {
 Route::middleware(['auth:sanctum', 'role:cliente'])->group(function () {
     Route::post('/pedido', [PedidoController::class, 'store']);
     Route::get('/pedidos', [PedidoController::class, 'index']);
+});
+
+Route::middleware(['auth:sanctum', 'role:cliente'])->group(function () {
+    Route::post('/pedidos/{pedido}/pagamento', [PagamentoController::class, 'processar']);
 });
 
 Route::middleware(['auth:sanctum', 'role:cozinha,gerente,cliente,atendente'])->group(function () {

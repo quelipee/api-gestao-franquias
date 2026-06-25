@@ -62,6 +62,11 @@ class Pedido extends Model
         return $this->hasMany(ItemPedido::class);
     }
 
+    public function pagamentos(): HasMany
+    {
+        return $this->hasMany(Pagamento::class);
+    }
+
     private static function gerarNumeroPedido(): string
     {
         return 'PED-' . Str::upper(Str::ulid());

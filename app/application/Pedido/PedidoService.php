@@ -3,6 +3,7 @@
 namespace App\application\Pedido;
 
 use App\Contracts\Repository\EstoqueRepositoryContract;
+use App\Contracts\Repository\PagamentoRepositoryContract;
 use App\Contracts\Repository\PedidoRepositoryContract;
 use App\Contracts\Repository\UnidadeRepositoryContract;
 use App\Contracts\Services\PedidoServiceContract;
@@ -21,9 +22,10 @@ use Throwable;
 class PedidoService implements PedidoServiceContract
 {
     public function __construct(
-        protected UnidadeRepositoryContract $unidadeRepository,
-        protected PedidoRepositoryContract  $pedidoRepository,
-        protected EstoqueRepositoryContract $estoqueRepository
+        protected UnidadeRepositoryContract   $unidadeRepository,
+        protected PedidoRepositoryContract    $pedidoRepository,
+        protected EstoqueRepositoryContract   $estoqueRepository,
+        protected PagamentoRepositoryContract $pagamentoRepository,
     )
     {
     }
@@ -51,6 +53,9 @@ class PedidoService implements PedidoServiceContract
 
                 $this->pedidoRepository->createItemPedido($pedido, $item, $precoUnitario);
             }
+
+            $this->pagamentoRepository->createPagamento($pedido);
+
             return $pedido;
         });
     }
