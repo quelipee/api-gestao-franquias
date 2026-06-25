@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Contracts\Services\FidelizacaoServiceContract;
 use App\Contracts\Services\UserAuthContract;
 use App\DTOs\UserAuthDTO;
 use App\DTOs\UserRegistrationDTO;
@@ -15,7 +16,8 @@ use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 class UserController extends Controller
 {
     public function __construct(
-        protected UserAuthContract $userAuth
+        protected UserAuthContract           $userAuth,
+        protected FidelizacaoServiceContract $fidelizacaoService
     )
     {
     }

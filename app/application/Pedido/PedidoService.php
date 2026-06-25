@@ -6,6 +6,7 @@ use App\Contracts\Repository\EstoqueRepositoryContract;
 use App\Contracts\Repository\PagamentoRepositoryContract;
 use App\Contracts\Repository\PedidoRepositoryContract;
 use App\Contracts\Repository\UnidadeRepositoryContract;
+use App\Contracts\Services\FidelizacaoServiceContract;
 use App\Contracts\Services\PedidoServiceContract;
 use App\DTOs\Pedido\PedidoDTO;
 use App\Enums\CanalPedido;
@@ -14,7 +15,9 @@ use App\Exceptions\EstoqueException;
 use App\Exceptions\InvalidOrderStatusTransitionException;
 use App\Exceptions\UnidadeException;
 use App\Exceptions\UnidadeProdutoException;
+use App\Models\Fidelizacao;
 use App\Models\Pedido;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Throwable;
@@ -26,6 +29,7 @@ class PedidoService implements PedidoServiceContract
         protected PedidoRepositoryContract    $pedidoRepository,
         protected EstoqueRepositoryContract   $estoqueRepository,
         protected PagamentoRepositoryContract $pagamentoRepository,
+        protected FidelizacaoServiceContract  $fidelizacaoService,
     )
     {
     }
@@ -118,6 +122,7 @@ class PedidoService implements PedidoServiceContract
     {
         $statusNovo = OrderStatus::from($request['status']);
         $statusAtual = $pedido->status;
+        $cliente = User::find($pedido->user_id);
 
         if (!$statusAtual->podeTransicionarPara($statusNovo)) {
             throw InvalidOrderStatusTransitionException::StatusNaoTransicionado();
@@ -128,6 +133,12 @@ class PedidoService implements PedidoServiceContract
 
             return $this->pedidoRepository->cancelamentoPedido($pedido, $statusNovo, $motivo_cancelamento);
         }
-        return $this->pedidoRepository->updateStatus($pedido, $statusNovo);
+        $updateStatus =  $this->pedidoRepository->updateStatus($pedido, $statusNovo);
+
+        if ($updateStatus->status == OrderStatus::Entregue && $cliente->consentimento_lgpd) {
+            $this->fidelizacaoService->creditarPontos($pedido);
+        }
+
+        return $updateStatus;
     }
 }

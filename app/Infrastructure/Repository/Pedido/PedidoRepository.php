@@ -6,6 +6,7 @@ use App\Contracts\Repository\PedidoRepositoryContract;
 use App\DTOs\Pedido\PedidoDTO;
 use App\Enums\CanalPedido;
 use App\Enums\OrderStatus;
+use App\Models\Fidelizacao;
 use App\Models\ItemPedido;
 use App\Models\Pedido;
 use Throwable;
@@ -68,5 +69,24 @@ class PedidoRepository implements PedidoRepositoryContract
         ]);
 
         return $pedido->refresh();
+    }
+
+    public function updateFidelidade(Pedido $pedido,array $data)
+    {
+        $pedido->update($data);
+        return $pedido->refresh();
+    }
+
+    public function createFidelizacao(int $user_id) : Fidelizacao
+    {
+        return Fidelizacao::firstOrCreate(
+            ['user_id' => $user_id],
+            [
+                'pontos_saldo' => 0,
+                'pontos_acumulados_total' => 0,
+                'pontos_resgatados_total' => 0,
+                'ativo' => true
+            ]
+        );
     }
 }
