@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\application\Auditoria\AuditoriaService;
 use App\application\Authenticated\UserAuthenticated;
 use App\application\Estoque\EstoqueService;
 use App\application\Estoque\MovimentacaoEstoqueService;
@@ -17,6 +18,7 @@ use App\Contracts\Repository\PedidoRepositoryContract;
 use App\Contracts\Repository\ProdutoRepositoryContract;
 use App\Contracts\Repository\UnidadeRepositoryContract;
 use App\Contracts\Repository\UserRepositoryContract;
+use App\Contracts\Services\AuditoriaServiceContract;
 use App\Contracts\Services\EstoqueServiceContract;
 use App\Contracts\Services\FidelizacaoServiceContract;
 use App\Contracts\Services\MovimentacaoEstoqueServiceContract;
@@ -63,6 +65,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(PagamentoServiceContract::class, MockService::class);
         $this->app->bind(PagamentoRepositoryContract::class, PagamentoRepository::class);
         $this->app->bind(FidelizacaoServiceContract::class, FidelizacaoService::class);
+        $this->app->bind(AuditoriaServiceContract::class, AuditoriaService::class);
     }
 
     /**

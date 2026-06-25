@@ -6,9 +6,12 @@ use App\Contracts\Repository\EstoqueRepositoryContract;
 use App\Contracts\Repository\PagamentoRepositoryContract;
 use App\Contracts\Repository\PedidoRepositoryContract;
 use App\Contracts\Repository\UnidadeRepositoryContract;
+use App\Contracts\Services\AuditoriaServiceContract;
 use App\Contracts\Services\FidelizacaoServiceContract;
 use App\Contracts\Services\PedidoServiceContract;
 use App\DTOs\Pedido\PedidoDTO;
+use App\Enums\AuditoriaAcao;
+use App\Enums\AuditoriaEntidade;
 use App\Enums\CanalPedido;
 use App\Enums\OrderStatus;
 use App\Exceptions\EstoqueException;
@@ -16,6 +19,7 @@ use App\Exceptions\InvalidOrderStatusTransitionException;
 use App\Exceptions\UnidadeException;
 use App\Exceptions\UnidadeProdutoException;
 use App\Models\Fidelizacao;
+use App\Models\LogAuditoria;
 use App\Models\Pedido;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -30,6 +34,7 @@ class PedidoService implements PedidoServiceContract
         protected EstoqueRepositoryContract   $estoqueRepository,
         protected PagamentoRepositoryContract $pagamentoRepository,
         protected FidelizacaoServiceContract  $fidelizacaoService,
+        protected AuditoriaServiceContract    $auditoriaService,
     )
     {
     }
@@ -59,6 +64,13 @@ class PedidoService implements PedidoServiceContract
             }
 
             $this->pagamentoRepository->createPagamento($pedido);
+            $this->auditoriaService->registrar(
+                user_id: $pedido->user_id,
+                acao: AuditoriaAcao::PedidoCriado,
+                entidade: AuditoriaEntidade::Pedido,
+                entidadeId: $pedido->id,
+                dadosNovos: $pedido->toArray()
+            );
 
             return $pedido;
         });
@@ -133,7 +145,16 @@ class PedidoService implements PedidoServiceContract
 
             return $this->pedidoRepository->cancelamentoPedido($pedido, $statusNovo, $motivo_cancelamento);
         }
-        $updateStatus =  $this->pedidoRepository->updateStatus($pedido, $statusNovo);
+        $updateStatus = $this->pedidoRepository->updateStatus($pedido, $statusNovo);
+
+        $this->auditoriaService->registrar(
+            user_id: auth()->id(),
+            acao: AuditoriaAcao::StatusAtualizado,
+            entidade: AuditoriaEntidade::Pedido,
+            entidadeId: $pedido->id,
+            dadosAnteriores: ['status' => $statusAtual],
+            dadosNovos: ['status' => $statusNovo],
+        );
 
         if ($updateStatus->status == OrderStatus::Entregue && $cliente->consentimento_lgpd) {
             $this->fidelizacaoService->creditarPontos($pedido);
