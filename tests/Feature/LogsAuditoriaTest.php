@@ -139,8 +139,50 @@ class LogsAuditoriaTest extends TestCase
         $this->assertEquals(OrderStatus::Pago->value, $log->dados_anteriores['status']);
         $this->assertEquals(OrderStatus::EmPreparo->value, $log->dados_novos['status']);
     }
+
+    public function test_log_is_created_when_pedido_is_cancelled()
+    {
+        $user = $this->authenticate(UserRole::GERENTE);
+        $unidade = $this->createUnidade()->first();
+        $this->vincularUsuarioUnidade($user, $unidade);
+
+        $cardapio = $this->unidadeAttachProduto($unidade);
+        $this->createEstoque($cardapio['produtos'], $unidade);
+
+        $pedido = Pedido::factory()->create([
+            'unidade_id' => $unidade->id,
+            'user_id' => User::factory()->create(),
+            'canal_pedido' => CanalPedido::Web,
+            'status' => OrderStatus::Pago,
+            'subtotal' => 100,
+            'total' => 100,
+        ]);
+
+        $payload = [
+            'status' => OrderStatus::Cancelado,
+            'motivo_cancelamento' => 'Cliente desistiu do pedido',
+        ];
+
+        $response = $this->putJson('/api/pedidos/' . $pedido->id, $payload);
+
+        $response->assertStatus(ResponseAlias::HTTP_OK);
+        $this->assertDatabaseHas('logs_auditoria', [
+            'user_id' => $user->id,
+            'acao' => AuditoriaAcao::PedidoCancelado,
+            'entidade' => AuditoriaEntidade::Pedido,
+            'entidade_id' => $pedido->id,
+        ]);
+
+        $log = LogAuditoria::where('entidade_id', $pedido->id)
+            ->where('acao', AuditoriaAcao::PedidoCancelado)
+            ->first();
+
+        $this->assertEquals(OrderStatus::Pago->value, $log->dados_anteriores['status']);
+        $this->assertEquals(OrderStatus::Cancelado->value, $log->dados_novos['status']);
+        $this->assertEquals('Cliente desistiu do pedido', $log->dados_novos['motivo_cancelamento']);
+    }
 }
 
 //test_log_is_created_when_pedido_is_created x
 //test_log_is_created_when_status_is_updated x
-//test_log_is_created_when_pedido_is_cancelled
+//test_log_is_created_when_pedido_is_cancelled x

@@ -132,28 +132,32 @@ class PedidoService implements PedidoServiceContract
      */
     public function editPedido(Pedido $pedido, Request $request): Pedido
     {
+        $status = [
+            'status_novo' => OrderStatus::from($request['status']),
+            'status_atual' => $pedido->status
+        ];
         $statusNovo = OrderStatus::from($request['status']);
         $statusAtual = $pedido->status;
+
         $cliente = User::find($pedido->user_id);
 
-        if (!$statusAtual->podeTransicionarPara($statusNovo)) {
+        if (!$status['status_atual']->podeTransicionarPara($status['status_novo'])) {
             throw InvalidOrderStatusTransitionException::StatusNaoTransicionado();
         }
 
-        if ($statusNovo == OrderStatus::Cancelado) {
-            $motivo_cancelamento = $request['motivo_cancelamento'];
-
-            return $this->pedidoRepository->cancelamentoPedido($pedido, $statusNovo, $motivo_cancelamento);
+        if ($status['status_novo'] === OrderStatus::Cancelado) {
+            return $this->cancelarPedido($pedido, $request, $status);
         }
-        $updateStatus = $this->pedidoRepository->updateStatus($pedido, $statusNovo);
+
+        $updateStatus = $this->pedidoRepository->updateStatus($pedido, $status['status_novo']);
 
         $this->auditoriaService->registrar(
             user_id: auth()->id(),
             acao: AuditoriaAcao::StatusAtualizado,
             entidade: AuditoriaEntidade::Pedido,
             entidadeId: $pedido->id,
-            dadosAnteriores: ['status' => $statusAtual],
-            dadosNovos: ['status' => $statusNovo],
+            dadosAnteriores: ['status' => $status['status_atual']],
+            dadosNovos: ['status' => $status['status_novo']],
         );
 
         if ($updateStatus->status == OrderStatus::Entregue && $cliente->consentimento_lgpd) {
@@ -161,5 +165,30 @@ class PedidoService implements PedidoServiceContract
         }
 
         return $updateStatus;
+    }
+
+    private function cancelarPedido(Pedido $pedido, Request $request, array $status): Pedido
+    {
+        $motivoCancelamento = $request->input('motivo_cancelamento');
+
+        $pedido_cancelado = $this->pedidoRepository->cancelamentoPedido(
+            $pedido,
+            OrderStatus::Cancelado,
+            $motivoCancelamento
+        );
+
+        $this->auditoriaService->registrar(
+            user_id: auth()->id(),
+            acao: AuditoriaAcao::PedidoCancelado,
+            entidade: AuditoriaEntidade::Pedido,
+            entidadeId: $pedido->id,
+            dadosAnteriores: ['status' => $status['status_atual']],
+            dadosNovos: [
+                'status' => $status['status_novo'],
+                'motivo_cancelamento' => $motivoCancelamento,
+            ],
+        );
+
+        return $pedido_cancelado;
     }
 }
