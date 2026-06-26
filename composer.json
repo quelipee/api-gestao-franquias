@@ -36,6 +36,7 @@
         }
     },
     "scripts": {
+        "tf": "@php artisan test --filter",
         "setup": [
             "composer install",
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",

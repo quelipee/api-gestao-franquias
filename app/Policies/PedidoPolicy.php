@@ -53,6 +53,10 @@ class PedidoPolicy
                 ->exists();
         }
 
+        if ($user->role === UserRole::ADMIN) {
+            return true;
+        }
+
         return false;
     }
 }

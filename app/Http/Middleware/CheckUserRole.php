@@ -21,6 +21,8 @@ class CheckUserRole
 
         if (!$user) return response()->json(['message' => 'Não Autorizado.'], Response::HTTP_UNAUTHORIZED);
 
+        if ($user->role === UserRole::ADMIN) return $next($request);
+
         if (!in_array($user->role->value, $roles)) {
             return response()->json([
                 'message' => 'Acesso negado para este recurso.'
