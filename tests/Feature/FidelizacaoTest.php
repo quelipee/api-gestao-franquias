@@ -17,7 +17,6 @@ use App\Models\Produto;
 use App\Models\Unidade;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 use Tests\TestCase;
@@ -112,7 +111,7 @@ class FidelizacaoTest extends TestCase
 
         $payload = ['status' => OrderStatus::Entregue];
 
-        $response = $this->putJson('api/pedidos/' . $pedido->id, $payload);
+        $response = $this->patchJson('api/pedidos/' . $pedido->id . '/status', $payload);
 
         $response->assertStatus(ResponseAlias::HTTP_OK);
         $this->assertDatabaseHas('fidelizacoes', [
@@ -247,7 +246,7 @@ class FidelizacaoTest extends TestCase
 
         $payload = ['status' => OrderStatus::Entregue];
 
-        $response = $this->putJson('api/pedidos/' . $pedido->id, $payload);
+        $response = $this->patchJson('api/pedidos/' . $pedido->id . '/status', $payload);
         $response->assertStatus(ResponseAlias::HTTP_OK);
         $this->assertDatabaseMissing('fidelizacoes', ['user_id' => $user->id,]);
         $this->assertDatabaseMissing('transacoes_fidelizacao', ['pedido_id' => $pedido->id,]);

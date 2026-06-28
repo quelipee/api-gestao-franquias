@@ -89,7 +89,7 @@ class LogsAuditoriaTest extends TestCase
             ],
         ];
 
-        $response = $this->postJson('/api/pedido', $payload);
+        $response = $this->postJson('/api/pedidos', $payload);
 
         $response->assertStatus(ResponseAlias::HTTP_CREATED);
 
@@ -121,7 +121,7 @@ class LogsAuditoriaTest extends TestCase
 
         $payload = ['status' => OrderStatus::EmPreparo];
 
-        $response = $this->putJson('/api/pedidos/' . $pedido->id, $payload);
+        $response = $this->patchJson('/api/pedidos/' . $pedido->id . '/status', $payload);
 
         $response->assertStatus(ResponseAlias::HTTP_OK);
 
@@ -163,7 +163,7 @@ class LogsAuditoriaTest extends TestCase
             'motivo_cancelamento' => 'Cliente desistiu do pedido',
         ];
 
-        $response = $this->putJson('/api/pedidos/' . $pedido->id, $payload);
+        $response = $this->patchJson('/api/pedidos/' . $pedido->id . '/status', $payload);
 
         $response->assertStatus(ResponseAlias::HTTP_OK);
         $this->assertDatabaseHas('logs_auditoria', [

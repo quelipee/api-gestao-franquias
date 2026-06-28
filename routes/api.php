@@ -30,6 +30,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('unidades/{unidade}', [UnidadeController::class, 'show']);
 
     Route::get('unidades/{unidade}/produtos', [UnidadeProdutoController::class, 'index']);
+
+    Route::get('produtos', [ProdutoController::class, 'index']);
+    Route::get('produtos/{produto}', [ProdutoController::class, 'show']);
 });
 
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -55,7 +58,7 @@ Route::middleware(['auth:sanctum', 'role:admin,gerente'])->group(function () {
 });
 
 Route::middleware(['auth:sanctum', 'role:cliente'])->group(function () {
-    Route::post('/pedido', [PedidoController::class, 'store']);
+    Route::post('/pedidos', [PedidoController::class, 'store']);
     Route::get('/pedidos', [PedidoController::class, 'index']);
 
     Route::get('fidelizacoes/saldo', [FidelizacaoController::class, 'saldo']);
@@ -67,10 +70,5 @@ Route::middleware(['auth:sanctum', 'role:cliente'])->group(function () {
 });
 
 Route::middleware(['auth:sanctum', 'role:cozinha,gerente,cliente,atendente'])->group(function () {
-    Route::put('/pedidos/{pedido}', [PedidoController::class, 'update']);
-});
-
-Route::middleware('guest:sanctum')->group(function () {
-    Route::get('produtos', [ProdutoController::class, 'index']);
-    Route::get('produtos/{produto}', [ProdutoController::class, 'show']);
+    Route::patch('/pedidos/{pedido}/status', [PedidoController::class, 'update']);
 });

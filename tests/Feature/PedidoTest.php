@@ -102,7 +102,7 @@ class PedidoTest extends TestCase
             ],
         ];
 
-        $response = $this->postJson('/api/pedido', $payload);
+        $response = $this->postJson('/api/pedidos', $payload);
 
         $response->assertStatus(ResponseAlias::HTTP_CREATED);
         $response->assertJsonFragment(['status' => OrderStatus::AguardandoPagamento->value]);
@@ -134,7 +134,7 @@ class PedidoTest extends TestCase
             ],
         ];
 
-        $response = $this->postJson('/api/pedido', $payload);
+        $response = $this->postJson('/api/pedidos', $payload);
         $response->assertStatus(ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
 
         $response->assertJsonValidationErrors([
@@ -159,7 +159,7 @@ class PedidoTest extends TestCase
             ],
         ];
 
-        $response = $this->postJson('/api/pedido', $payload);
+        $response = $this->postJson('/api/pedidos', $payload);
 
         $response->assertStatus(ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
         $response->assertJsonValidationErrors([
@@ -183,7 +183,7 @@ class PedidoTest extends TestCase
             ],
         ];
 
-        $response = $this->postJson('/api/pedido', $payload);
+        $response = $this->postJson('/api/pedidos', $payload);
 
         $response->assertStatus(ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
         $this->assertDatabaseMissing('pedidos', [
@@ -207,7 +207,7 @@ class PedidoTest extends TestCase
             ],
         ];
 
-        $response = $this->postJson('/api/pedido', $payload);
+        $response = $this->postJson('/api/pedidos', $payload);
 
         $response->assertStatus(ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
         $this->assertDatabaseMissing('pedidos', [
@@ -324,7 +324,7 @@ class PedidoTest extends TestCase
 
         $payload = ['status' => OrderStatus::EmPreparo];
 
-        $response = $this->putJson('/api/pedidos/' . $pedido->id, $payload);
+        $response = $this->patchJson('/api/pedidos/' . $pedido->id . '/status', $payload);
 
         $response->assertStatus(ResponseAlias::HTTP_OK);
         $this->assertDatabaseHas('pedidos', [
@@ -360,7 +360,7 @@ class PedidoTest extends TestCase
 
         $payload = ['status' => OrderStatus::Pronto];
 
-        $response = $this->putJson('/api/pedidos/' . $pedido->id, $payload);
+        $response = $this->patchJson('/api/pedidos/' . $pedido->id . '/status', $payload);
 
         $response->assertStatus(ResponseAlias::HTTP_OK);
         $this->assertDatabaseHas('pedidos', [
@@ -390,7 +390,7 @@ class PedidoTest extends TestCase
             'status' => OrderStatus::Entregue->value,
         ];
 
-        $response = $this->putJson('/api/pedidos/' . $pedido->id, $payload);
+        $response = $this->patchJson('/api/pedidos/' . $pedido->id . '/status', $payload);
 
         $response->assertStatus(ResponseAlias::HTTP_OK);
         $this->assertDatabaseHas('pedidos', [
@@ -422,7 +422,7 @@ class PedidoTest extends TestCase
             'motivo_cancelamento' => 'Cliente desistiu do pedido',
         ];
 
-        $response = $this->putJson('/api/pedidos/' . $pedido->id, $payload);
+        $response = $this->patchJson('/api/pedidos/' . $pedido->id . '/status', $payload);
 
         $response->assertStatus(ResponseAlias::HTTP_OK);
         $this->assertDatabaseHas('pedidos', [
@@ -458,7 +458,7 @@ class PedidoTest extends TestCase
             'motivo_cancelamento' => 'demorou muito para fazer.',
         ];
 
-        $response = $this->putJson('/api/pedidos/' . $pedido->id, $payload);
+        $response = $this->patchJson('/api/pedidos/' . $pedido->id . '/status', $payload);
 
         $response->assertStatus(ResponseAlias::HTTP_FORBIDDEN);
     }
@@ -485,7 +485,7 @@ class PedidoTest extends TestCase
             'status' => OrderStatus::EmPreparo,
         ];
 
-        $response = $this->putJson('/api/pedidos/' . $pedido->id, $payload);
+        $response = $this->patchJson('/api/pedidos/' . $pedido->id . '/status', $payload);
 
         $response->assertStatus(ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
         $this->assertDatabaseHas('pedidos', [
