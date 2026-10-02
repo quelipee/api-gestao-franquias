@@ -330,9 +330,6 @@ Authorization: Bearer {token}
 Toda ação sensível (criação de pedido, mudança de status, cancelamento) gera um registro em `logs_auditoria`, contendo:
 usuário responsável pela ação, ação executada, entidade afetada, snapshot do estado anterior e do novo estado.
 
-## Documentação da API
-
-> **FALTA FAZER AINDA**
 
 ## Testes
 
