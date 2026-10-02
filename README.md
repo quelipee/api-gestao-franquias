@@ -1,6 +1,6 @@
-# Sistema de Gestão de Pedidos Multicanal — API Back-end
+# Sistema de Gestão de Pedidos Multicanal - API Back-end
 
-Projeto acadêmico desenvolvido para a disciplina de Projeto Multidisciplinar (Trilha Back-End) — Uninter, 2026.
+Projeto acadêmico desenvolvido para a disciplina de Projeto Multidisciplinar (Trilha Back-End) - Uninter, 2026.
 
 API REST em Laravel para gestão de pedidos de uma rede de lanchonetes com múltiplas unidades, suportando múltiplos
 canais de atendimento (App, Totem, Balcão, Pickup, Web), controle de estoque por unidade, programa de fidelização,

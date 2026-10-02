@@ -45,28 +45,55 @@ use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
+    public array $bindings = [
+        UserAuthContract::class => UserAuthenticated::class,
+        UserRepositoryContract::class => UserRepository::class,
+
+        ProdutoServiceContract::class => ProdutoService::class,
+        ProdutoRepositoryContract::class => ProdutoRepository::class,
+
+        UnidadeServiceContract::class => UnidadeService::class,
+        UnidadeRepositoryContract::class => UnidadeRepository::class,
+
+        UnidadeProdutoServiceContract::class => UnidadeProdutoService::class,
+
+        EstoqueServiceContract::class => EstoqueService::class,
+        EstoqueRepositoryContract::class => EstoqueRepository::class,
+
+        MovimentacaoEstoqueServiceContract::class => MovimentacaoEstoqueService::class,
+
+        PedidoServiceContract::class => PedidoService::class,
+        PedidoRepositoryContract::class => PedidoRepository::class,
+
+        PagamentoServiceContract::class => MockService::class,
+        PagamentoRepositoryContract::class => PagamentoRepository::class,
+
+        FidelizacaoServiceContract::class => FidelizacaoService::class,
+        AuditoriaServiceContract::class => AuditoriaService::class,
+    ];
+
     /**
      * Register any application services.
      */
-    public function register(): void
-    {
-        $this->app->bind(UserAuthContract::class, UserAuthenticated::class);
-        $this->app->bind(UserRepositoryContract::class, UserRepository::class);
-        $this->app->bind(ProdutoServiceContract::class, ProdutoService::class);
-        $this->app->bind(ProdutoRepositoryContract::class, ProdutoRepository::class);
-        $this->app->bind(UnidadeServiceContract::class, UnidadeService::class);
-        $this->app->bind(UnidadeRepositoryContract::class, UnidadeRepository::class);
-        $this->app->bind(UnidadeProdutoServiceContract::class, UnidadeProdutoService::class);
-        $this->app->bind(EstoqueServiceContract::class, EstoqueService::class);
-        $this->app->bind(EstoqueRepositoryContract::class, EstoqueRepository::class);
-        $this->app->bind(MovimentacaoEstoqueServiceContract::class, MovimentacaoEstoqueService::class);
-        $this->app->bind(PedidoServiceContract::class, PedidoService::class);
-        $this->app->bind(PedidoRepositoryContract::class, PedidoRepository::class);
-        $this->app->bind(PagamentoServiceContract::class, MockService::class);
-        $this->app->bind(PagamentoRepositoryContract::class, PagamentoRepository::class);
-        $this->app->bind(FidelizacaoServiceContract::class, FidelizacaoService::class);
-        $this->app->bind(AuditoriaServiceContract::class, AuditoriaService::class);
-    }
+//    public function register(): void
+//    {
+//        $this->app->bind(UserAuthContract::class, UserAuthenticated::class);
+//        $this->app->bind(UserRepositoryContract::class, UserRepository::class);
+//        $this->app->bind(ProdutoServiceContract::class, ProdutoService::class);
+//        $this->app->bind(ProdutoRepositoryContract::class, ProdutoRepository::class);
+//        $this->app->bind(UnidadeServiceContract::class, UnidadeService::class);
+//        $this->app->bind(UnidadeRepositoryContract::class, UnidadeRepository::class);
+//        $this->app->bind(UnidadeProdutoServiceContract::class, UnidadeProdutoService::class);
+//        $this->app->bind(EstoqueServiceContract::class, EstoqueService::class);
+//        $this->app->bind(EstoqueRepositoryContract::class, EstoqueRepository::class);
+//        $this->app->bind(MovimentacaoEstoqueServiceContract::class, MovimentacaoEstoqueService::class);
+//        $this->app->bind(PedidoServiceContract::class, PedidoService::class);
+//        $this->app->bind(PedidoRepositoryContract::class, PedidoRepository::class);
+//        $this->app->bind(PagamentoServiceContract::class, MockService::class);
+//        $this->app->bind(PagamentoRepositoryContract::class, PagamentoRepository::class);
+//        $this->app->bind(FidelizacaoServiceContract::class, FidelizacaoService::class);
+//        $this->app->bind(AuditoriaServiceContract::class, AuditoriaService::class);
+//    }
 
     /**
      * Bootstrap any application services.
